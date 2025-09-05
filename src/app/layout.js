@@ -38,10 +38,10 @@ export default function RootLayout({ children }) {
         </header>
 
         {/* 🔹 Main Content */}
-        <main className="container mx-auto p-6">{children}</main>
+        <main className="container">{children}</main>
 
         {/* 🔹 Footer */}
-        <footer className="bg-gray-100 text-center text-sm py-4 mt-6">
+        <footer className="bg-gray-100 text-center text-sm py-4">
           © {new Date().getFullYear()} Sancters — Productivity with Trust
         </footer>
       </body>
