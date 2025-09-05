@@ -1,19 +1,41 @@
 "use client";
 import Link from "next/link";
+import { setDoc, doc } from "firebase/firestore";
+import { db } from "../../firebase/config";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { auth } from "../../firebase/config";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 export default function SignupPage() {
   const router = useRouter();
-  const [Manager,setManager] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [id, setEmpId] = useState("");
-  function check(e){
-    e.preventDefault();
-    console.log("DONE");
-    router.push('/login');
+  const [username, setUsername] = useState("");
+  
+
+
+async function registerUser(e) {
+  e.preventDefault();
+  try {
+    // Register user in Firebase Auth
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Store user info in Firestore (never store password!)
+    await setDoc(doc(db, "users", user.uid), {
+      username: username,    // Corrected: use 'name' parameter as username
+      email: email,
+      password:password,
+      createdAt: new Date()
+    });
+
+    console.log("User registered and profile saved!");
+  } catch (error) {
+    console.error("Registration failed:", error.message);
   }
+}
+
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 relative overflow-hidden">
 
@@ -28,27 +50,21 @@ export default function SignupPage() {
           <h1 className="text-2xl font-semibold text-gray-800">Produs</h1>
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Create your free account
+          Create your account
         </h2>
         <p className="text-gray-500 text-sm mb-6">
           Empower your team with trust, tasks, and recognition.
         </p>
 
-        <form className="space-y-4" onSubmit={check}>
+        <form className="space-y-4" onSubmit={registerUser}>
           <input
             type="text"
             placeholder="Full Name"
             className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
             required 
-            onChange={(e)=>{setName(e.target.value)}}
+            onChange={(e)=>{setUsername(e.target.value)}}
           />
-          <input
-            type="text"
-            placeholder={Manager ? `Enter Manager ID`:`Enter Employee ID`}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
-            required
-            onChange={(e)=>{setEmpId(e.target.value)}}
-          />
+          
           <input
             type="email"
             placeholder="Work Email"
@@ -63,24 +79,12 @@ export default function SignupPage() {
             required
             onChange={(e)=>{setPassword(e.target.value)}}
           />
-          <div className="flex items-center justify-between px-2">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                name="role"
-                value="employee"
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                onClick={()=>setManager(!Manager)}
-              />
-              <p className="text-gray-700">Manager</p>
-            </label>
-          </div>
-
+          
           <button
             type="submit"
             className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-md hover:opacity-90 transition"
           >
-            Sign Up for Free
+            Sign Up
           </button>
         </form>
         <p className="mt-6 text-sm text-gray-600">
