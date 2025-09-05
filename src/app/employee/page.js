@@ -7,8 +7,6 @@ import { collection, getDocs } from "firebase/firestore";
 export default function EmployeePage() {
   const [tasks, setTasks] = useState([]);
   const [mood, setMood] = useState(null);
-
-  // Fetch tasks (dummy fetch from Firestore "tasks" collection)
   useEffect(() => {
     const fetchTasks = async () => {
       const querySnapshot = await getDocs(collection(db, "tasks"));
@@ -20,11 +18,8 @@ export default function EmployeePage() {
     };
     fetchTasks();
   }, []);
-
-  // Mood check-in handler
   const handleMoodCheckin = (selectedMood) => {
     setMood(selectedMood);
-    // TODO: save to Firestore "moods" collection
     console.log("Mood logged:", selectedMood);
   };
 

@@ -1,9 +1,12 @@
-"use client";
-import Link from "next/link";
 
-export default function RegisterPage() {
+import Link from "next/link";
+import Navbar from "../components/navbar";
+import Footer from "../components/footer";
+export default function MainPage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-white px-6">
+    <div className="h-screen flex flex-col">
+      <Navbar/>
+      <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-white px-6">
       {/* Logo + Tagline */}
       <div className="text-center mb-10">
         <div className="flex justify-center items-center space-x-2">
@@ -33,9 +36,9 @@ export default function RegisterPage() {
         >
           Get Started — It’s Free
         </Link>
-      </div>
-
-      
-    </main>
+      </div>      
+    </div>
+    <Footer/>
+    </div>
   );
 }
