@@ -13,7 +13,7 @@ function Navbar() {
           <nav className="container mx-auto flex items-center justify-between p-4">
             {/* Logo */}
             <Link href="/" className="text-xl font-bold text-blue-600">
-              Sancters
+              Produs
             </Link>
 
             {/* Menu */}

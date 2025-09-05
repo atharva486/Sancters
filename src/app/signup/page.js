@@ -23,9 +23,9 @@ export default function SignupPage() {
 
         <div className="flex justify-center items-center space-x-2 mb-6">
           <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold">
-            S
+            P
           </div>
-          <h1 className="text-2xl font-semibold text-gray-800">Sancters</h1>
+          <h1 className="text-2xl font-semibold text-gray-800">Produs</h1>
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
           Create your free account

@@ -5,7 +5,7 @@ function Footer() {
     useEffect(()=>{setYear(new Date().getFullYear())},[])
   return (
     <div className="bg-gray-100 text-center text-sm py-4">
-          © {year} Sancters — Productivity with Trust
+          © {year} Produs — Productivity with Trust
     </div>
   )
 }

@@ -2,8 +2,8 @@
 import "./globals.css";
 import Link from "next/link";
 export const metadata = {
-  title: "Sancters Employee Productivity",
-  description: "Track productivity, tasks, mood, and recognition.",
+  title: "Produs Productivity",
+  description: "Track productivity, tasks, and recognition.",
 };
 export default function RootLayout({ children }) {
   return (
