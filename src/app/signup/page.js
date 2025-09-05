@@ -26,9 +26,12 @@ async function registerUser(e) {
       username: username,    // Corrected: use 'name' parameter as username
       email: email,
       password:password,
+      codeforces:null,
+      leetcode:null,
+      codechef:null,
       createdAt: new Date()
     });
-
+    router.push('/login');
     console.log("User registered and profile saved!");
   } catch (error) {
     console.error("Registration failed:", error.message);
