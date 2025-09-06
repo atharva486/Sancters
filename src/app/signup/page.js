@@ -49,7 +49,7 @@ async function registerUser(e) {
           Create your account
         </h2>
         <p className="text-gray-500 text-sm mb-6">
-          Empower your team with trust, tasks, and recognition.
+         Start tracking today and take one step closer to becoming a stronger coder!
         </p>
 
         <form className="space-y-4" onSubmit={registerUser}>

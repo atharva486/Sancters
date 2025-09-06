@@ -21,7 +21,7 @@ export default function MainPage() {
         The fair work platform, for everyone
       </h2>
       <p className="mt-4 text-lg text-gray-600 text-center max-w-xl">
-        Empower your team with tasks, recognition, and well-being — all in one simple, transparent platform.
+     Start tracking today and take one step closer to becoming a stronger coder!
       </p>
 
       <div className="mt-8">

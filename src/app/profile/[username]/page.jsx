@@ -15,6 +15,9 @@ export default function ProfilePage() {
   const [ccHandle, setCcHandle] = useState("");
   const [ccInput, setCcInput] = useState("");
 
+const [notifications, setNotifications] = useState([]);
+
+
   const [cfStats, setCfStats] = useState({ rating: "-", highestRating: "-", solvedToday: 0 });
   const [ccStats, setCcStats] = useState({ rating: "-", highestRating: "-", solvedToday: 0, totalSolved: 0 });
 
@@ -99,6 +102,37 @@ useEffect(() => {
     }
   };
 
+
+useEffect(() => {
+  const notes = [];
+
+  // Codeforces Goal Check
+  if (cfHandle && cfGoal > 0) {
+    if (cfStats.solvedToday < cfGoal) {
+      notes.push(
+        `🎯 Codeforces: You still need to solve ${cfGoal - cfStats.solvedToday} problems today!`
+      );
+    } else {
+      notes.push(`✅ Codeforces: Daily goal completed! Great job 🚀`);
+    }
+  }
+
+  // CodeChef Goal Check
+  if (ccHandle && ccGoal > 0) {
+    if (ccStats.totalSolved < ccGoal) {
+      notes.push(
+        `🎯 CodeChef: You still need ${ccGoal - ccStats.totalSolved} problems to hit your goal.`
+      );
+    } else {
+      notes.push(`✅ CodeChef: Daily goal completed! 🎉`);
+    }
+  }
+
+  setNotifications(notes);
+}, [cfStats, ccStats, cfGoal, ccGoal, cfHandle, ccHandle]);
+
+
+
   return (
     <div className="min-h-screen bg-gray-100 p-6 flex gap-6">
       <div className="w-80 bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-6">
@@ -172,6 +206,26 @@ useEffect(() => {
       </div>
       <div className="flex-1 bg-white rounded-2xl shadow-lg p-6">
         <h1 className="text-2xl font-bold mb-4">Welcome, {username}!</h1>
+
+{/* 🔔 Notifications Banner */}
+{notifications.length > 0 && (
+  <div className="mb-6">
+    {notifications.map((note, idx) => (
+      <div
+        key={idx}
+        className={`p-4 mb-2 rounded-lg shadow-md ${
+          note.includes("✅")
+            ? "bg-green-100 text-green-800 border border-green-300"
+            : "bg-yellow-100 text-yellow-800 border border-yellow-300"
+        }`}
+      >
+        {note}
+      </div>
+    ))}
+  </div>
+)}
+
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Codeforces Stats */}
           <div className="p-4 bg-indigo-50 rounded">
