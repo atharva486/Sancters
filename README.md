@@ -56,6 +56,7 @@ Produs is designed to increase productivity and help users stay motivated by vis
     npm run dev
     ```
 5. **Open** [http://localhost:3000](http://localhost:3000) in your browser.
+6. **Deployed Website Link** https://sancters.vercel.app/
 
 ---
 
