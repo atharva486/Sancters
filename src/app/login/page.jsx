@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
-import { getDoc, doc } from "firebase/firestore";
-import { setDoc} from "firebase/firestore";
+import { getDoc, doc,setDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -14,7 +13,6 @@ export default function LoginPage() {
   async function loginUser(e) {
   e.preventDefault();
   try {
-    // Try to log in user with Firebase Auth
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     if(userCredential){
     const user = userCredential.user;
@@ -29,11 +27,9 @@ export default function LoginPage() {
     }
     else
       alert("Enter valid credentials");
-    // router.push('/dashboard'); // redirect if needed
   } catch (error) {
     alert("Enter valid Credentials");
     console.error("Login failed:", error.message);
-    // Optionally display error to the user
   }
 }
   return (

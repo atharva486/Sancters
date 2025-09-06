@@ -9,6 +9,7 @@ import { getDoc, setDoc, doc } from "firebase/firestore";
 
 export default function ProfilePage() {
   const { username } = useParams();
+  
   const router = useRouter();
 
   const [platformHandles, setPlatformHandles] = useState({
@@ -17,33 +18,30 @@ export default function ProfilePage() {
   });
 
   const [connectedAccounts, setConnectedAccounts] = useState({
-    codeforces: null,
-    codechef: null,
+    codeforces: "",
+    codechef: "",
   });
 
   const [platformStats, setPlatformStats] = useState({
-    codeforces: null,
-    codechef: null,
+    codeforces: "",
+    codechef: "",
   });
   async function getUserHandlesFromDB(username) {
   const userDoc = await getDoc(doc(db, "users", username));
   if (!userDoc.exists()) return {};
-  // Platform handles are top-level fields e.g., codeforces, codechef
   const data = userDoc.data();
   return {
-    codeforces: data.codeforces || null,
-    codechef: data.codechef || null,
-    // leetcode: data.leetcode || null, // if needed
+    codeforces: data.codeforces || "",
+    codechef: data.codechef || "",
   };
 }   
 async function saveUserHandleToDB(username, platform, handle) {
   const userRef = doc(db, "users", username);
-  // Only update the one platform field
+  console.log(userRef);
   await setDoc(userRef, {
     [platform]: handle
   }, { merge: true });
 }
-  // Fetch connected accounts on page load from DB
   useEffect(() => {
     async function fetchDBHandles() {
       const dbHandles = await getUserHandlesFromDB(username);
@@ -55,7 +53,6 @@ async function saveUserHandleToDB(username, platform, handle) {
     fetchDBHandles();
   }, [username]);
 
-  // Save handle to DB and set state
   const handleAddPlatform = async (platform) => {
     if (platformHandles[platform].trim() === "") return;
 
@@ -90,7 +87,7 @@ async function saveUserHandleToDB(username, platform, handle) {
             codeforces: {
               rating: cfData.result[0]?.rating || "-",
               highestRating: cfData.result[0]?.maxRating || "-",
-              problemsSolved: "-", // can be filled if needed
+              problemsSolved: "-",
             },
           }));
         }
@@ -117,12 +114,7 @@ async function saveUserHandleToDB(username, platform, handle) {
   return (
     <div className="min-h-screen bg-gray-100 p-6 md:p-8 flex gap-6">
       <div className="w-80 bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-6">
-        <Link
-          href="/teams/group"
-          className="mt-2 w-full block text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded hover:opacity-90 transition"
-        >
-          + Join / Create Group
-        </Link>
+        
         <div>
           <h2 className="text-xl font-semibold mb-2">Coding Platforms</h2>
           {["codeforces", "codechef"].map((platform) => (

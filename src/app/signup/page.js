@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc,getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,22 +13,15 @@ export default function SignupPage() {
   const [username, setUsername] = useState("");
   
 
-
 async function registerUser(e) {
   e.preventDefault();
   try {
-    // Register user in Firebase Auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-
-    // Store user info in Firestore (never store password!)
     await setDoc(doc(db, "users", user.uid), {
-      username: username,    // Corrected: use 'name' parameter as username
+      username: username,
       email: email,
       password:password,
-      codeforces:null,
-      leetcode:null,
-      codechef:null,
       createdAt: new Date()
     });
     router.push('/login');

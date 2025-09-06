@@ -1,13 +1,10 @@
 
 import Link from "next/link";
-import Navbar from "../components/navbar";
-import Footer from "../components/footer";
 export default function MainPage() {
   return (
     <div className="h-screen flex flex-col">
-      <Navbar/>
       <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-white px-6">
-      {/* Logo + Tagline */}
+
       <div className="text-center mb-10">
         <div className="flex justify-center items-center space-x-2">
           <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold">
@@ -20,7 +17,6 @@ export default function MainPage() {
         <p className="text-sm text-gray-500 mt-2">Productivity & Trust, Simplified</p>
       </div>
 
-      {/* Headline */}
       <h2 className="text-4xl md:text-5xl font-bold text-gray-900 max-w-2xl text-center leading-tight">
         The fair work platform, for everyone
       </h2>
@@ -28,7 +24,6 @@ export default function MainPage() {
         Empower your team with tasks, recognition, and well-being — all in one simple, transparent platform.
       </p>
 
-      {/* CTA */}
       <div className="mt-8">
         <Link
           href="/signup"
@@ -38,7 +33,6 @@ export default function MainPage() {
         </Link>
       </div>      
     </div>
-    <Footer/>
     </div>
   );
 }
