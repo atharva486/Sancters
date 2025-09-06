@@ -6,14 +6,12 @@ export async function GET(request, { params }) {
   const res = await fetch(`https://www.codechef.com/users/${username}`);
   const html = await res.text();
 
-  // 1. Use regex to find "Fully Solved (N)" directly from HTML text!
   let totalSolved = 0;
   const match = html.match(/Fully\s+Solved\s*\((\d+)\)/i);
   if (match) {
     totalSolved = parseInt(match[1], 10);
   }
 
-  // 2. Parse rating and highest rating (these selectors typically remain stable)
   const $ = load(html);
   const rating = $(".rating-number").text().trim();
   let highestRating = $(".rating-header small").last().text().replace(/[^\d]/g, '').trim();
@@ -21,6 +19,6 @@ export async function GET(request, { params }) {
   return NextResponse.json({
     rating,
     highestRating,
-    totalSolved: Number(totalSolved) || 0,
+    totalSolved: Number(totalSolved),
   });
 }

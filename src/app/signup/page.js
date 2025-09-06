@@ -22,6 +22,7 @@ async function registerUser(e) {
       username: username,
       email: email,
       password:password,
+      daily_goal:1,
       createdAt: new Date()
     });
     router.push('/login');

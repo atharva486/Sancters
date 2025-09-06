@@ -6,7 +6,7 @@ import { db } from "@/firebase/config";
 import { getDoc, setDoc, doc } from "firebase/firestore";
 import { CheckCircle, AlertTriangle, PlusCircle, Trash2, LogOut } from "lucide-react";
 
-// Circular progress component
+// --- Circular Progress UI ---
 function CircularProgress({ progress, size = 80, strokeWidth = 8, color }) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -48,14 +48,14 @@ export default function ProfilePage() {
   const [ccInput, setCcInput] = useState("");
 
   const [cfStats, setCfStats] = useState({ rating: "-", highestRating: "-", solvedToday: 0 });
-  const [ccStats, setCcStats] = useState({ rating: "-", highestRating: "-", solvedToday: 0, totalSolved: 0 });
+  const [ccStats, setCcStats] = useState({ rating: "-", highestRating: "-", totalSolved: 0 });
 
   const [cfGoal, setCfGoal] = useState(0);
   const [ccGoal, setCcGoal] = useState(0);
 
   const [notifications, setNotifications] = useState([]);
 
-  // Load handles from Firebase
+  // --- Load handles and goals from Firebase ---
   useEffect(() => {
     async function fetchHandles() {
       const userDoc = await getDoc(doc(db, "users", username));
@@ -65,29 +65,35 @@ export default function ProfilePage() {
       setCfInput(data.codeforces || "");
       setCcHandle(data.codechef || "");
       setCcInput(data.codechef || "");
+      setCfGoal(typeof data.cf_goal === "number" ? data.cf_goal : 0);
+      setCcGoal(typeof data.cc_goal === "number" ? data.cc_goal : 0);
     }
     fetchHandles();
   }, [username]);
 
-  // Fetch Codeforces stats
+  // --- Fetch Codeforces stats (today, rating, etc) ---
   useEffect(() => {
     async function fetchCF() {
       if (!cfHandle) return;
-      const infoRes = await fetch(`https://codeforces.com/api/user.info?handles=${cfHandle}`);
-      const info = await infoRes.json();
-      const user = info.result[0];
-      const statusRes = await fetch(`https://codeforces.com/api/user.status?handle=${cfHandle}`);
-      const status = await statusRes.json();
-      const today = new Date().toISOString().slice(0, 10);
-      const solvedToday = status.result.filter(
-        s => s.verdict === "OK" && new Date(s.creationTimeSeconds * 1000).toISOString().slice(0, 10) === today
-      ).length;
-      setCfStats({ rating: user.rating || "-", highestRating: user.maxRating || "-", solvedToday });
+      try {
+        const infoRes = await fetch(`https://codeforces.com/api/user.info?handles=${cfHandle}`);
+        const info = await infoRes.json();
+        const user = info.result[0];
+        const statusRes = await fetch(`https://codeforces.com/api/user.status?handle=${cfHandle}`);
+        const status = await statusRes.json();
+        const today = new Date().toISOString().slice(0, 10);
+        const solvedToday = status.result.filter(
+          s => s.verdict === "OK" && new Date(s.creationTimeSeconds * 1000).toISOString().slice(0, 10) === today
+        ).length;
+        setCfStats({ rating: user.rating || "-", highestRating: user.maxRating || "-", solvedToday });
+      } catch (err) {
+        setCfStats({ rating: "-", highestRating: "-", solvedToday: 0 });
+      }
     }
     fetchCF();
   }, [cfHandle]);
 
-  // Fetch CodeChef stats
+  // --- Fetch CodeChef stats ---
   useEffect(() => {
     async function fetchCC() {
       if (!ccHandle) return;
@@ -102,6 +108,7 @@ export default function ProfilePage() {
     fetchCC();
   }, [ccHandle]);
 
+  // --- Add/Remove platforms ---
   const handleAddPlatform = async (platform, value) => {
     if (!value.trim()) return;
     await setDoc(doc(db, "users", username), { [platform]: value.trim() }, { merge: true });
@@ -113,21 +120,34 @@ export default function ProfilePage() {
       setCcInput(value.trim());
     }
   };
-
   const handleRemovePlatform = async (platform) => {
     await setDoc(doc(db, "users", username), { [platform]: "" }, { merge: true });
     if (platform === "codeforces") {
       setCfHandle("");
       setCfInput("");
       setCfStats({ rating: "-", highestRating: "-", solvedToday: 0 });
+      setCfGoal(0);
     } else {
       setCcHandle("");
       setCcInput("");
-      setCcStats({ rating: "-", highestRating: "-", solvedToday: 0, totalSolved: 0 });
+      setCcStats({ rating: "-", highestRating: "-", totalSolved: 0 });
+      setCcGoal(0);
     }
   };
 
-  // Notifications logic
+  // --- Handle daily goal updating and saving to Firestore ---
+  const handleGoalChange = async (platform, value) => {
+    const num = Number(value);
+    if (platform === "codeforces") {
+      setCfGoal(num);
+      await setDoc(doc(db, "users", username), { cf_goal: num }, { merge: true });
+    } else if (platform === "codechef") {
+      setCcGoal(num);
+      await setDoc(doc(db, "users", username), { cc_goal: num }, { merge: true });
+    }
+  };
+
+  // --- Notifications (goals met or not) ---
   useEffect(() => {
     const notes = [];
     if (cfHandle && cfGoal > 0) {
@@ -147,6 +167,7 @@ export default function ProfilePage() {
     setNotifications(notes);
   }, [cfStats, ccStats, cfGoal, ccGoal, cfHandle, ccHandle]);
 
+  // --- UI ---
   return (
     <div className="min-h-screen bg-gray-50 p-6 md:p-10 flex flex-col md:flex-row gap-6">
       {/* Sidebar */}
@@ -193,7 +214,7 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      {/* Main Stats */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col gap-6">
         <h1 className="text-3xl font-bold">Welcome, {username}!</h1>
 
@@ -214,9 +235,8 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Stats Cards */}
+        {/* Stats Cards - Codeforces */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Codeforces Card */}
           <div className="bg-indigo-50 p-6 rounded-xl shadow-lg hover:shadow-xl transition flex flex-col items-center gap-4">
             <h3 className="font-semibold text-xl flex items-center gap-2">Codeforces</h3>
             <p>Rating: {cfStats.rating}</p>
@@ -227,23 +247,33 @@ export default function ProfilePage() {
             />
             <label className="flex items-center gap-2">
               Daily Goal:
-              <input type="number" value={cfGoal} onChange={e => setCfGoal(+e.target.value)} className="border px-2 rounded w-20"/>
+              <input
+                type="number"
+                value={cfGoal}
+                onChange={e => handleGoalChange("codeforces", e.target.value)}
+                className="border px-2 rounded w-20"
+              />
             </label>
           </div>
 
-          {/* CodeChef Card */}
+          {/* Stats Cards - CodeChef */}
           <div className="bg-orange-50 p-6 rounded-xl shadow-lg hover:shadow-xl transition flex flex-col items-center gap-4">
             <h3 className="font-semibold text-xl flex items-center gap-2">CodeChef</h3>
             <p>Rating: {ccStats.rating}</p>
             <p>Highest: {ccStats.highestRating}</p>
-            <p>Total Solved: {ccStats.totalSolved}</p>
+           
             <CircularProgress
               progress={Math.min((ccStats.totalSolved / Math.max(ccGoal, 1)) * 100, 100)}
               color={ccStats.totalSolved >= ccGoal ? "#16a34a" : "#f97316"}
             />
             <label className="flex items-center gap-2">
               Daily Goal:
-              <input type="number" value={ccGoal} onChange={e => setCcGoal(+e.target.value)} className="border px-2 rounded w-20"/>
+              <input
+                type="number"
+                value={ccGoal}
+                onChange={e => handleGoalChange("codechef", e.target.value)}
+                className="border px-2 rounded w-20"
+              />
             </label>
           </div>
         </div>
